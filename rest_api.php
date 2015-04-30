@@ -510,6 +510,14 @@ class ControllerFeedRestApi extends Controller {
 		$this->response->setOutput(json_encode($json));		
 	}
 
+	public function cart_clear() {
+
+		$json = array();
+		$this->cart->clear();
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));		
+	}
+
 	private function getCategoriesTree($parent = 0, $level = 1) {
 		$this->load->model('catalog/category');
 		$this->load->model('tool/image');
@@ -722,50 +730,34 @@ class ControllerFeedRestApi extends Controller {
         }
 
 	public function addNewCustomer() {
-                /*
 		$json = array();
-		if ($this->request->server['REQUEST_METHOD'] == 'POST'] {
-				$data = $this->request->post;
+		if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+			$data=$this->request->post;
+                        $this->load->model('account/customer');
+			$data["fax"] = "0000";
+			$data["company"] = "NA";
+			$data["company_id"] = "0";
+			$data["tax_id"] = "0";
+			$data["address_2"] = "";
+			$data["city"] = "";
+			$data["postcode"] = "0";
+			$data["country_id"] = "0";
+			$data["zone_id"] = "0";
 
-                                $data['fax'] = "1111111";
-                                $data['company'] = "yeti inc.";
-                                $data['city'] = "Bangalore";
-                                $data['country_id'] = "IN";
+                        $this->model_account_customer->addCustomer($data);
+		}
+		$customer_info = $this->model_account_customer->getCustomerByEmail($data["email"]);
+		if ($customer_info && $customer_info['approved']) {
+                    if ($this->customer->login($data["email"], $data["password"], false) == true) { 
+		    	$json['success'] = "TRUE";
+	            }
+               } else {
+		    $json['success'] = "FALSE";
+               }
+                
+		$this->response->setOutput(json_encode($json));
 
-				$this->load->model('account/customer');
-                                $this->model_account_customer($data);
-	        }
-                $json['success'] = "TRUE";
-                */
-             $json = array();
-                if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
-                        $data=$this->request->post;
-                        if (isset($data['customer_group_id']) && is_array($this->config->get('config_customer_group_display')) && in_array($data['customer_group_id'], $this->config->get('config_customer_group_display'))) {
-                                $customer_group_id = $data['customer_group_id'];
-                        } else {
-                                $customer_group_id = $this->config->get('config_customer_group_id');
-                        }
-
-                        $this->load->model('account/customer_group');
-
-                        $customer_group_info = $this->model_account_customer_group->getCustomerGroup($customer_group_id);
-
-//                        $this->db->query("INSERT INTO " . DB_PREFIX . "customer SET store_id = '" . (int)$this->config->get('config_store_id') . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', fax = '" . $this->db->escape($data['fax']) . "', salt = '" . $this->db->escape($salt = substr(md5(uniqid(rand(), true)), 0, 9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "', newsletter = '" . (isset($data['newsletter']) ? (int)$data['newsletter'] : 0) . "', customer_group_id = '" . (int)$customer_group_id . "', ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "', status = '1', approved = '" . (int)!$customer_group_info['approval'] . "', date_added = NOW()");
-
-$this->db->query("INSERT INTO " . DB_PREFIX . "customer SET store_id = '1', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', email = '" . $this->db->escape($data['email']) . "', telephone = '" . $this->db->escape($data['telephone']) . "', fax = '1111111111', salt = '" . $this->db->escape($salt = substr(md5(uniqid(rand(), true)), 0, 9)) . "', password = '" . $this->db->escape(sha1($salt . sha1($salt . sha1($data['password'])))) . "', newsletter = '" . (isset($data['newsletter']) ? (int)$data['newsletter'] : 0) . "', customer_group_id = '" . (int)$customer_group_id . "', ip = '" . $this->db->escape($this->request->server['REMOTE_ADDR']) . "', status = '1', approved = '" . (int)!$customer_group_info['approval'] . "', date_added = NOW()");
-
-                        $customer_id = $this->db->getLastId();
-
-                        //$this->db->query("INSERT INTO " . DB_PREFIX . "address SET customer_id = '" . (int)$customer_id . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', company = '" . $this->db->escape($data['company']) . "', company_id = '" . $this->db->escape($data['company_id']) . "', tax_id = '" . $this->db->escape($data['tax_id']) . "', address_1 = '" . $this->db->escape($data['address_1']) . "', address_2 = '" . $this->db->escape($data['address_2']) . "', city = '" . $this->db->escape($data['city']) . "', postcode = '" . $this->db->escape($data['postcode']) . "', country_id = '" . (int)$data['country_id'] . "', zone_id = '" . (int)$data['zone_id'] . "'");
-			$this->db->query("INSERT INTO " . DB_PREFIX . "address SET customer_id = '" . (int)$customer_id . "', firstname = '" . $this->db->escape($data['firstname']) . "', lastname = '" . $this->db->escape($data['lastname']) . "', company = 'tsystem', company_id = 'tsys', tax_id = 'ABCD1234', address_1 = '" . $this->db->escape($data['address']) . "', address_2 = '" . $this->db->escape($data['address']) . "', city = 'Bangalore', postcode = '560100', country_id = 'IN', zone_id = '123'");
-
-                        $address_id = $this->db->getLastId();
-
-                        $this->db->query("UPDATE " . DB_PREFIX . "customer SET address_id = '" . (int)$address_id . "' WHERE customer_id = '" . (int)$customer_id . "'");
-
-                }
-                $this->response->setOutput(json_encode($json));
-	}
+	}	
 
 
 	public function setShipping() {
