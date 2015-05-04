@@ -146,6 +146,19 @@ class ControllerFeedRestApi extends Controller {
 		}
 	}
 
+    public function product() {
+		//$this->checkPlugin();
+
+		$this->load->model('catalog/product');
+        $product_id = $this->request->get['id'];
+	
+		$json = array();
+		$product = $this->model_catalog_product->getProduct($product_id);
+        $json['success'] = "TRUE";
+        $json['product'] = $product;
+		$this->response->setOutput(json_encode($json));
+
+	}
 	/*
 	* Get products
 	*/
