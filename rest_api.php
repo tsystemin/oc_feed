@@ -387,7 +387,7 @@ class ControllerFeedRestApi extends Controller {
 					'product_option_id'       => $option['product_option_id'],
 					'product_option_value_id' => $option['product_option_value_id'],
 					'name'                    => $option['name'],
-					'value'                   => $option['value'],
+					//'value'                   => $option['value'],
 					'type'                    => $option['type']
 				);
 			}
