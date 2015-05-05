@@ -757,19 +757,23 @@ class ControllerFeedRestApi extends Controller {
 			$data["country_id"] = "0";
 			$data["zone_id"] = "0";
 
-                        $this->model_account_customer->addCustomer($data);
-		}
-		$customer_info = $this->model_account_customer->getCustomerByEmail($data["email"]);
-		if ($customer_info && $customer_info['approved']) {
-                    if ($this->customer->login($data["email"], $data["password"], false) == true) { 
-		    	$json['success'] = "TRUE";
-	            }
-               } else {
-		    $json['success'] = "FALSE";
-               }
+                        $customer_info = $this->model_account_customer->getCustomerByEmail($data["email"]);
+                        if (!$customer_info) {
+                                $this->model_account_customer->addCustomer($data);
+                                $new_customer_info = $this->model_account_customer->getCustomerByEmail($data["email"]);
+                                if ($new_customer_info && $new_customer_info['approved']) {
+                                        if ($this->customer->login($data["email"], $data["password"], false) == true) {
+                                                $json['success'] = "TRUE";
+                                        }
+                                } else {
+                                        $json['success'] = "FALSE";
+                                }
+                        } else {
+                                $json['success'] = "EXISTS";
+                        }
+                }
                 
 		$this->response->setOutput(json_encode($json));
-
 	}	
 
 
