@@ -713,17 +713,14 @@ class ControllerFeedRestApi extends Controller {
 		} else {
 			$passwd = "";
 		}
-
-                //$this->customer->login($email_id, $passwd, false);
-		//$json['success'] = "TRUE";
-
                 
-                if ($this->customer->login($email_id, $passwd, true) == true) {
+                if ($this->customer->login($email_id, $passwd, false) == true) {
 		    $json['success'] = "TRUE";
+		    $json['customer_id'] = $this->customer->getId();
                 } else {
 		    $json['success'] = "FALSE";
                 }
-                //$json['customer_id'] = $this->customer->getId();
+                
                 // we have to return the customer_id in return
 		$this->response->setOutput(json_encode($json));
 
