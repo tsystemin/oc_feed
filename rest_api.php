@@ -1093,7 +1093,7 @@ class ControllerFeedRestApi extends Controller {
 			
 			if (empty($shipping_address)) {								
 				$redirect = $this->url->link('checkout/checkout', '', 'SSL');
-                                $json['success'] = "checkout failed shipping address not set";
+                                $json['success'] = "FAIL: shipping address not set";
 			}
 			
 			// Validate if shipping method has been set.	
@@ -1120,19 +1120,19 @@ class ControllerFeedRestApi extends Controller {
                 // failing here		
 		if (empty($payment_address)) {
 			$redirect = $this->url->link('checkout/checkout', '', 'SSL');
-			$json['success'] = "checkout failed payment address not set";
+			$json['success'] = "FAIL: payment address not set";
 		}			
 		
 		// Validate if payment method has been set.	
 		if (!isset($this->session->data['payment_method'])) {
 			$redirect = $this->url->link('checkout/checkout', '', 'SSL');
-			$json['success'] = "checkout failed payment method not set";
+			$json['success'] = "FAIL: payment method not set";
 		}
 					
 		// Validate cart has products and has stock.	
 		if ((!$this->cart->hasProducts() && empty($this->session->data['vouchers'])) || (!$this->cart->hasStock() && !$this->config->get('config_stock_checkout'))) {
 			$redirect = $this->url->link('checkout/cart');				
-			$json['success'] = "checkout failed cart has product has stock ";
+			$json['success'] = "FAIL: no stock ";
 		}	
 		
 		// Validate minimum quantity requirments.			
@@ -1149,7 +1149,7 @@ class ControllerFeedRestApi extends Controller {
 			
 			if ($product['minimum'] > $product_total) {
 				$redirect = $this->url->link('checkout/cart');
-				$json['success'] = "checkout failed product minimum check failed";
+				$json['success'] = "FAIL: product minimum order not met";
 				
 				break;
 			}				
@@ -1422,7 +1422,7 @@ class ControllerFeedRestApi extends Controller {
                         $this->config->set('cod_order_status_id', 1);
                         $this->model_checkout_order->confirm($this->session->data['order_id'], $this->config->get('cod_order_status_id'));
                         $order_id = $this->session->data['order_id'];
-                        $json['success'] = sprintf("order placeed successfully with order id %d", $order_id);
+                        $json['success'] = sprintf("PASS: order_id %d", $order_id);
 		}
 		
 		$this->response->setOutput(json_encode($json));
