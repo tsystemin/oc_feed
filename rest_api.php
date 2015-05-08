@@ -700,43 +700,42 @@ class ControllerFeedRestApi extends Controller {
 	}	
 
 	public function customerLogin() {
-		$json = array();
-                //change this to post
-		if (isset($this->request->post['email'])) {
-			$email_id = $this->request->post['email'];
-		} else {
-			$email_id = "";
-		}
+                $json = array();
+                if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+                    //change this to post
+                    if (isset($this->request->post['email'])) {
+                        $email_id = $this->request->post['email'];
+                    } else {
+                        $email_id = "";
+                    }
 
-		if (isset($this->request->post['password'])) {
-			$passwd = $this->request->post['password'];
-		} else {
-			$passwd = "";
-		}
-                
-                if ($this->customer->login($email_id, $passwd, false) == true) {
-		    $json['success'] = "TRUE";
-		    $json['customer_id'] = $this->customer->getId();
-                } else {
-		    $json['success'] = "FALSE";
+                    if (isset($this->request->post['password'])) {
+                        $passwd = $this->request->post['password'];
+                    } else {
+                        $passwd = "";
+                    }
+
+                    if ($this->customer->login($email_id, $passwd, false) == true) {
+                        $json['success'] = "TRUE";
+                        $json['customer_id'] = $this->customer->getId();
+                    } else {
+                        $json['success'] = "FALSE";
+                    }
                 }
-                
                 // we have to return the customer_id in return
-		$this->response->setOutput(json_encode($json));
+                $this->response->setOutput(json_encode($json));
 
         }
 
 	public function customerLogout() {
-		$json = array();
+                $json = array();
 
-                //$this->customer->login($email_id, $passwd, false);
-		//$json['success'] = "TRUE";
+                if (($this->request->server['REQUEST_METHOD'] == 'POST')) {
+                    $this->customer->logout();
+                    $json['success'] = "TRUE";
+                }
 
-                
-                $this->customer->logout();
-		$json['success'] = "TRUE";
-		$this->response->setOutput(json_encode($json));
-
+                $this->response->setOutput(json_encode($json));
         }
 
 	public function addNewCustomer() {
