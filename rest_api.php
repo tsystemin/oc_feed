@@ -299,6 +299,16 @@ class ControllerFeedRestApi extends Controller {
 		}
 	}	
 	
+	public function cart_add_bulk() {
+                $cart_bulk = $this->request->post['products'];
+                $input = stripslashes(html_entity_decode($cart_bulk));
+
+                $result = json_decode($input, true);
+                foreach ($result as $row) {
+                        $this->cart->add($row[product_id], $row[quantity], "");
+                }
+	}
+
 	public function cart_add() {
 		//$this->load->language('api/cart');
 
