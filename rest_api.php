@@ -1531,6 +1531,18 @@ class ControllerFeedRestApi extends Controller {
 				$data['payment_firstname'] = $data['firstname'];
 				$data['payment_lastname'] = $data['lastname'];	
 				$data['payment_address_1'] = $payment_address_new;
+
+				$data['payment_company'] = "";	
+				$data['payment_company_id'] = "";	
+				$data['payment_tax_id'] = "";	
+				$data['payment_address_2'] = "";
+				$data['payment_city'] = "";
+				$data['payment_postcode'] = "";
+				$data['payment_zone'] = "";
+				$data['payment_zone_id'] = "";
+				$data['payment_country'] = "";
+				$data['payment_country_id'] = "";
+				$data['payment_address_format'] = "";
 			} else {
 				$data['payment_firstname'] = $payment_address['firstname'];
 				$data['payment_lastname'] = $payment_address['lastname'];	
@@ -1572,6 +1584,16 @@ class ControllerFeedRestApi extends Controller {
 					$data['shipping_firstname'] = $data['firstname'];
 					$data['shipping_lastname'] = $data['lastname'];	
 					$data['shipping_address_1'] = $shipping_address_new;
+
+					$data['shipping_company'] = "";	
+					$data['shipping_address_2'] = "";
+					$data['shipping_city'] = "";
+					$data['shipping_postcode'] = "";
+					$data['shipping_zone'] = "";
+					$data['shipping_zone_id'] = "";
+					$data['shipping_country'] = "";
+					$data['shipping_country_id'] = "";
+					$data['shipping_address_format'] = "";
 				} else {
 					$data['shipping_firstname'] = $shipping_address['firstname'];
 					$data['shipping_lastname'] = $shipping_address['lastname'];	
@@ -1732,7 +1754,7 @@ class ControllerFeedRestApi extends Controller {
                         $order_id = $this->session->data['order_id'];
                         $json['success'] = sprintf("PASS: order_id %d", $order_id);
 		}
-		
+
 		$this->response->setOutput(json_encode($json));
   	}
 
