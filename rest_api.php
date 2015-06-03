@@ -1254,7 +1254,7 @@ class ControllerFeedRestApi extends Controller {
 				$payment_address = $this->model_account_address->getAddress($this->session->data['payment_address_id']);     
 			}
                 } elseif (isset($this->session->data['guest'])) {
-                        $payment_address = $this->session->data['guest']['payment'];
+			$payment_address = $this->session->data['guest']['payment'];
                 }
 
 		if (!empty($payment_address)) {
@@ -1363,9 +1363,12 @@ class ControllerFeedRestApi extends Controller {
 		$this->response->setOutput(json_encode($json));
 	}
 
+
+
 	public function checkoutpost() {
 		$redirect = '';
                 $json = array();
+
 		
 		if ($this->cart->hasShipping()) {
 			// Validate if shipping address has been set.		
@@ -1526,38 +1529,55 @@ class ControllerFeedRestApi extends Controller {
 				
 				$payment_address = $this->session->data['guest']['payment'];
 			}
-		
-			if (isset($this->request->post['payment_address'])) {	
-				$data['payment_firstname'] = $data['firstname'];
-				$data['payment_lastname'] = $data['lastname'];	
-				$data['payment_address_1'] = $payment_address_new;
+	
+			if ($this->customer->isLogged()) {	
+				if (isset($this->request->post['payment_address'])) {	
+					$data['payment_firstname'] = $data['firstname'];
+					$data['payment_lastname'] = $data['lastname'];	
+					$data['payment_address_1'] = $payment_address_new;
 
+					$data['payment_company'] = "";	
+					$data['payment_company_id'] = "";	
+					$data['payment_tax_id'] = "";	
+					$data['payment_address_2'] = "";
+					$data['payment_city'] = "";
+					$data['payment_postcode'] = "";
+					$data['payment_zone'] = "";
+					$data['payment_zone_id'] = "";
+					$data['payment_country'] = "";
+					$data['payment_country_id'] = "";
+					$data['payment_address_format'] = "";
+				} else {
+					$data['payment_firstname'] = $payment_address['firstname'];
+					$data['payment_lastname'] = $payment_address['lastname'];	
+					$data['payment_company'] = $payment_address['company'];	
+					$data['payment_company_id'] = $payment_address['company_id'];	
+					$data['payment_tax_id'] = $payment_address['tax_id'];	
+					$data['payment_address_1'] = $payment_address['address_1'];
+					$data['payment_address_2'] = $payment_address['address_2'];
+					$data['payment_city'] = $payment_address['city'];
+					$data['payment_postcode'] = $payment_address['postcode'];
+					$data['payment_zone'] = $payment_address['zone'];
+					$data['payment_zone_id'] = $payment_address['zone_id'];
+					$data['payment_country'] = $payment_address['country'];
+					$data['payment_country_id'] = $payment_address['country_id'];
+					$data['payment_address_format'] = $payment_address['address_format'];
+				}
+			}  elseif (isset($this->session->data['guest'])) { 
+				$data['payment_firstname'] = $this->session->data['guest']['firstname'];
+				$data['payment_lastname'] = "";	
+				$data['payment_address_1'] = $this->session->data['guest']['payment'];
 				$data['payment_company'] = "";	
 				$data['payment_company_id'] = "";	
 				$data['payment_tax_id'] = "";	
 				$data['payment_address_2'] = "";
 				$data['payment_city'] = "";
-				$data['payment_postcode'] = "";
+				$data['payment_postcode'] = $this->session->data['guest']['pin'];
 				$data['payment_zone'] = "";
 				$data['payment_zone_id'] = "";
 				$data['payment_country'] = "";
 				$data['payment_country_id'] = "";
 				$data['payment_address_format'] = "";
-			} else {
-				$data['payment_firstname'] = $payment_address['firstname'];
-				$data['payment_lastname'] = $payment_address['lastname'];	
-				$data['payment_company'] = $payment_address['company'];	
-				$data['payment_company_id'] = $payment_address['company_id'];	
-				$data['payment_tax_id'] = $payment_address['tax_id'];	
-				$data['payment_address_1'] = $payment_address['address_1'];
-				$data['payment_address_2'] = $payment_address['address_2'];
-				$data['payment_city'] = $payment_address['city'];
-				$data['payment_postcode'] = $payment_address['postcode'];
-				$data['payment_zone'] = $payment_address['zone'];
-				$data['payment_zone_id'] = $payment_address['zone_id'];
-				$data['payment_country'] = $payment_address['country'];
-				$data['payment_country_id'] = $payment_address['country_id'];
-				$data['payment_address_format'] = $payment_address['address_format'];
 			}
 		
 			if (isset($this->session->data['payment_method']['title'])) {
@@ -1579,35 +1599,51 @@ class ControllerFeedRestApi extends Controller {
 				} elseif (isset($this->session->data['guest'])) {
 					$shipping_address = $this->session->data['guest']['shipping'];
 				}			
-				
-				if (isset($this->request->post['shipping_address'])) {	
-					$data['shipping_firstname'] = $data['firstname'];
-					$data['shipping_lastname'] = $data['lastname'];	
-					$data['shipping_address_1'] = $shipping_address_new;
+			
+				if ($this->customer->isLogged()) {	
+					if (isset($this->request->post['shipping_address'])) {	
+						$data['shipping_firstname'] = $data['firstname'];
+						$data['shipping_lastname'] = $data['lastname'];	
+						$data['shipping_address_1'] = $shipping_address_new;
+
+						$data['shipping_company'] = "";	
+						$data['shipping_address_2'] = "";
+						$data['shipping_city'] = "";
+						$data['shipping_postcode'] = "";
+						$data['shipping_zone'] = "";
+						$data['shipping_zone_id'] = "";
+						$data['shipping_country'] = "";
+						$data['shipping_country_id'] = "";
+						$data['shipping_address_format'] = "";
+					} else {
+						$data['shipping_firstname'] = $shipping_address['firstname'];
+						$data['shipping_lastname'] = $shipping_address['lastname'];	
+						$data['shipping_company'] = $shipping_address['company'];	
+						$data['shipping_address_1'] = $shipping_address['address_1'];
+						$data['shipping_address_2'] = $shipping_address['address_2'];
+						$data['shipping_city'] = $shipping_address['city'];
+						$data['shipping_postcode'] = $shipping_address['postcode'];
+						$data['shipping_zone'] = $shipping_address['zone'];
+						$data['shipping_zone_id'] = $shipping_address['zone_id'];
+						$data['shipping_country'] = $shipping_address['country'];
+						$data['shipping_country_id'] = $shipping_address['country_id'];
+						$data['shipping_address_format'] = $shipping_address['address_format'];
+					}
+				}  elseif (isset($this->session->data['guest'])) { 
+					$data['shipping_firstname'] = $this->session->data['guest']['firstname'];
+					$data['shipping_lastname'] = "";	
+					$data['shipping_address_1'] = $this->session->data['guest']['shipping'];
 
 					$data['shipping_company'] = "";	
 					$data['shipping_address_2'] = "";
 					$data['shipping_city'] = "";
-					$data['shipping_postcode'] = "";
+					$data['shipping_postcode'] = $this->session->data['guest']['pin'];
 					$data['shipping_zone'] = "";
 					$data['shipping_zone_id'] = "";
 					$data['shipping_country'] = "";
 					$data['shipping_country_id'] = "";
 					$data['shipping_address_format'] = "";
-				} else {
-					$data['shipping_firstname'] = $shipping_address['firstname'];
-					$data['shipping_lastname'] = $shipping_address['lastname'];	
-					$data['shipping_company'] = $shipping_address['company'];	
-					$data['shipping_address_1'] = $shipping_address['address_1'];
-					$data['shipping_address_2'] = $shipping_address['address_2'];
-					$data['shipping_city'] = $shipping_address['city'];
-					$data['shipping_postcode'] = $shipping_address['postcode'];
-					$data['shipping_zone'] = $shipping_address['zone'];
-					$data['shipping_zone_id'] = $shipping_address['zone_id'];
-					$data['shipping_country'] = $shipping_address['country'];
-					$data['shipping_country_id'] = $shipping_address['country_id'];
-					$data['shipping_address_format'] = $shipping_address['address_format'];
-				}
+				} 
 			
 				if (isset($this->session->data['shipping_method']['title'])) {
 					$data['shipping_method'] = $this->session->data['shipping_method']['title'];
@@ -1756,6 +1792,51 @@ class ControllerFeedRestApi extends Controller {
 		}
 
 		$this->response->setOutput(json_encode($json));
+  	}
+
+
+	public function guestCheckoutpost() {
+                $guest = array();
+
+                if (isset($this->request->post['payment_address_guest'])) {
+			$p_addr = $this->request->post['payment_address_guest'];
+			$txt = str_replace("%40", ",", $p_addr);
+			$p_addr = str_replace("%20", " ", $txt);
+			$txt = str_replace("%30", "-", $p_addr);
+			$p_addr = $txt;
+                        $guest['payment'] = $p_addr;
+                }
+
+                if (isset($this->request->post['shipping_address_guest'])) {
+			$s_addr = $this->request->post['shipping_address_guest'];
+			$txt = str_replace("%40", ",", $s_addr);
+			$s_addr = str_replace("%20", " ", $txt);
+			$txt = str_replace("%30", "-", $s_addr);
+			$s_addr = $txt;
+                        $guest['shipping'] = $s_addr;
+                }
+
+                if (isset($this->request->post['name_guest'])) {
+			$n = $this->request->post['name_guest'];
+			$txt = str_replace("%20", " ", $n);
+                        $guest['firstname'] = $txt; 
+                }
+
+                if (isset($this->request->post['email_guest'])) {
+			$guest['email'] = $this->request->post['email_guest'];
+                }
+
+                if (isset($this->request->post['phone_guest'])) {
+			$guest['telephone'] = $this->request->post['phone_guest'];
+                }
+
+                if (isset($this->request->post['pin_guest'])) {
+			$guest['pin'] = $this->request->post['pin_guest'];
+		}
+
+		$this->session->data['guest'] = $guest;
+
+		$this->checkoutpost();
   	}
 
 	public function checkout() {
