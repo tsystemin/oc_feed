@@ -216,6 +216,36 @@ class ControllerFeedRestApi extends Controller {
 		}
 	}
 		
+	public function order() {
+		//$this->checkPlugin();
+	
+		$this->load->model('account/order');
+
+		if (isset($this->request->get['order_id']) && ctype_digit($this->request->get['order_id'])) {
+			$id = $this->request->get['order_id'];
+		}
+
+		if ($this->customer->isLogged()) {
+			$result = $this->model_account_order->getOrder($id);
+
+			$order['order_id']		= $result['order_id'];
+			$order['order_status_id']		= $result['order_status_id'];
+			$order['name']			= $result['firstname'] . ' ' . $result['lastname'];
+			//$order['status']		= $result['status'];
+			$order['date_added']	= $result['date_added'];
+			//$order['products']		= ($product_total + $voucher_total);
+			$order['total']			= $result['total'];
+			$order['currency_code']	= $result['currency_code'];
+			$order['currency_value']= $result['currency_value'];
+
+			$json['success'] 	= true;
+			$json['order'] 	= $order;
+		} else {
+			$json['success'] 	= false;
+		}
+		
+		$this->response->setOutput(json_encode($json));
+	}	
 
 	/*
 	* Get orders
@@ -1788,7 +1818,9 @@ class ControllerFeedRestApi extends Controller {
                         $this->config->set('cod_order_status_id', 1);
                         $this->model_checkout_order->confirm($this->session->data['order_id'], $this->config->get('cod_order_status_id'));
                         $order_id = $this->session->data['order_id'];
-                        $json['success'] = sprintf("PASS: order_id %d", $order_id);
+                        $json['success'] = "PASS";
+                        //$json['order_id'] = sprintf("PASS: order_id %d", $order_id);
+                        $json['order_id'] = $order_id;
 		}
 
 		$this->response->setOutput(json_encode($json));
