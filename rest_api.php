@@ -330,6 +330,7 @@ class ControllerFeedRestApi extends Controller {
 	}	
 	
 	public function cart_add_bulk() {
+		$this->cart->clear();
                 $cart_bulk = $this->request->post['products'];
                 $input = stripslashes(html_entity_decode($cart_bulk));
 
