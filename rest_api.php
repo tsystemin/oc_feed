@@ -218,6 +218,7 @@ class ControllerFeedRestApi extends Controller {
 		
 	public function order() {
 		//$this->checkPlugin();
+                $id = 0;
 	
 		$this->load->model('account/order');
 
@@ -225,7 +226,7 @@ class ControllerFeedRestApi extends Controller {
 			$id = $this->request->get['order_id'];
 		}
 
-		if ($this->customer->isLogged()) {
+		if ($id) {
 			$result = $this->model_account_order->getOrder($id);
 
 			$order['order_id']		= $result['order_id'];
@@ -1866,6 +1867,10 @@ class ControllerFeedRestApi extends Controller {
                 if (isset($this->request->post['pin_guest'])) {
 			$guest['pin'] = $this->request->post['pin_guest'];
 		}
+
+		$guest['customer_group_id'] = 0;
+		$guest['lastname'] = "";
+		$guest['fax'] = "";
 
 		$this->session->data['guest'] = $guest;
 
